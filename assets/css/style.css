@@ -34,3 +34,21 @@
 .card-title{
     min-height: 60px;
 }
+#menu{
+    top: 0px;
+    left: 10px;
+}
+#tableWrapper{
+
+    
+    transition: 0.5s;
+    overflow: hidden;
+    width: 28%;
+    
+
+}
+.active{
+   width: 0 !important;
+   overflow: hidden;
+
+}
