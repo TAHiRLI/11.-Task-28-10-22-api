@@ -14,16 +14,23 @@
 
     <title>Task 28-10-22</title>
   </head>
-  <body >
+  <body class="pt-4" >
 
-    <button id="menu" class="position-fixed border-0 fs-4 rounded text-light bg-dark"><i class="las la-table"></i></button>
+    <button id="menu" class="position-fixed border-0 fs-4 rounded text-light bg-success"><i class="las la-table"></i></button>
     <div class="bg-image"></div>
 
-    <div class="d-flex mt-5 ">
-        <aside id="tableWrapper" class="bg-light  table hide  ">
+
+    <section class="d-flex mt-5 ">
+
+        <div id="tableWrapper" class="bg-light  table hide  ">
+          <div class="">
+            <button id="del-selected" class=" text-start btn btn-danger">Delete<i class="p-0 las la-minus-circle"></i></button>
+            <button id="add" class=" text-start btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">Add<i class="p-0 las la-plus-circle"></i></button>
+          </div>
         <table class="table table-hover ">
             <thead>
               <tr>
+                <th></th>
                 <th scope="col">#</th>
                 <th scope="col">Brand</th>
                 <th scope="col">Title</th>
@@ -36,14 +43,42 @@
         
             </tbody>
           </table>
-    </aside>
-
-  <section class="cards col m-auto p-5 pt-0">
-
-
-  </section>
-
     </div>
+
+  <div class="cards col m-auto p-5 pt-0">
+
+
+  </div>
+
+    </section>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add a product</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="" >
+          <input id="brand" type="text" class="form-control mt-3" placeholder="Brand">
+          <input id="title" type="text" class="form-control mt-3" placeholder="Title">
+          <input id="rating" type="text" class="form-control mt-3" placeholder="Rating">
+          <input id="url" type="url" class="form-control mt-3" placeholder="Image Url">
+          <textarea name="" id="desc" cols="30" rows="5" class="form-control mt-3"></textarea>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-dismiss" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="modal-save" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
   
 
 

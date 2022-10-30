@@ -23,7 +23,7 @@ const getAndShowproducts = () => {
                     `
           <div class="card" id = "card${product.id}">
           <div class="card-body">
-          <h4 class="card-title">${product.title}</h4>
+          <h5 class="card-title">${product.title}</h5>
           <img width="100%" src="${product.thumbnail}" alt="" class="card-img">
               <p class="card-text text-muted">${product.description}}</p>
           </div>
@@ -37,6 +37,7 @@ const getAndShowproducts = () => {
 
                 tbody.innerHTML += `
           <tr id="tr${product.id}">
+          <th><input type="checkbox"></th>
           <th scope="row"></th>
           <td>${product.brand}</td>
           <td>${product.title}</td>
@@ -89,8 +90,8 @@ const getAndShowproducts = () => {
 
 
                 let row = e.target.parentElement.parentElement.parentElement;
-                let brandText = row.children[1];
-                let titleText = row.children[2];
+                let brandText = row.children[2];
+                let titleText = row.children[3];
 
 
                 let brand = brandText.innerHTML;
@@ -173,11 +174,85 @@ const getAndShowproducts = () => {
 
             }
            })
+        })
+        .then(()=>{
+            //pagination
         });
 
 };
 
 getAndShowproducts();
+
+
+
+menuBtn.addEventListener('click', ()=>{
+    table.classList.toggle('hide')
+
+})
+
+let delSelectedBtn = document.querySelector('#del-selected');
+
+delSelectedBtn.addEventListener('click', ()=>{
+    let checkedElements = document.querySelectorAll('input[type="checkbox"]:checked');
+    for (const element of checkedElements) {
+        let row = element.parentElement.parentElement;
+        let card = document.querySelector(`#${row.getAttribute('id').replace('tr','card')}`);
+        console.log(card);
+        card.style.display = 'none'
+        tbody.removeChild(row);
+    }   
+    numberRows();
+})
+
+let addBtn = document.querySelector('#add');
+
+let modalSaveBtn = document.querySelector('#modal-save');
+modalSaveBtn.addEventListener('click', ()=>{
+    let brand = document.querySelector('#brand').value;
+    let title = document.querySelector('#title').value;
+    let rating = document.querySelector('#rating').value;
+    let url = document.querySelector('#url').value;
+    let desc = document.querySelector('#desc').value;
+
+    cards.innerHTML +=`
+    <div class="card" id = "">
+    <div class="card-body">
+    <h5 class="card-title">${title}</h5>
+    <img width="100%" src="${url}" alt="" class="card-img">
+        <p class="card-text text-muted">${desc}}</p>
+    </div>
+    <div class="d-flex justify-content-between border-top border-1 p-2 px-4 ">
+       <h6 class="card-brand text">${brand}</h6>
+        <button class=" del-btn  border-0 bg-transparent text-danger fs-2  las la-trash"> </button>
+    </div>
+</div>
+    `;
+
+//     tbody.innerHTML += `
+//     <tr id="">
+//     <th><input type="checkbox"></th>
+//     <th scope="row"></th>
+//     <td>${brand}</td>
+//     <td>${title}</td>
+//     <td>${rating}</td>
+//     <td><div class="row">
+//     <button class="p-0 col edit-btn  border-0 bg-transparent text-warning fs-5  las la-pen"> </button>
+//     <button class="p-0 col remove-btn  border-0 bg-transparent text-danger fs-5  las la-trash"> </button>
+//     <button class="p-0 col discard-btn  border-0 bg-transparent text-danger  fs-5 las la-times d-none"> </button>
+//     <button class="p-0 col save-btn  border-0 bg-transparent text-success  fs-5 las la-check d-none"> </button>
+    
+
+//     </div></td>
+//     </tr>
+//     `;
+
+})
+
+
+
+
+
+
 
 const numberRows = () => {
     rowNumbers = document.querySelectorAll('th[scope = "row"');
@@ -186,10 +261,4 @@ const numberRows = () => {
 
     }
 }
-
-menuBtn.addEventListener('click', ()=>{
-    table.classList.toggle('hide')
-})
-
-
 
