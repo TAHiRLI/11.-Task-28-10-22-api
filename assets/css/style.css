@@ -40,15 +40,40 @@
 }
 #tableWrapper{
 
-    
+    direction: rtl;
     transition: 0.5s;
-    overflow: hidden;
-    width: 28%;
+    overflow-y: scroll;
     
+    width: 30%;
+    padding: 20px;
+    height: 90vh;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    
+    
+
 
 }
-.active{
-   width: 0 !important;
+table{
+    direction: ltr;
+}
+::-webkit-scrollbar{
+    background-color: rgb(233, 233, 233);
+    width: 7px;
+}
+::-webkit-scrollbar-thumb{
+    background-color: rgb(78, 78, 78);
+    border-radius: 10px;
+}
+.hide{
+   width: 0% !important;
+   padding: 0 !important;
    overflow: hidden;
 
+}
+input{
+    width: 100%;
+}
+.card-text{
+    font-size: 14px;
 }
