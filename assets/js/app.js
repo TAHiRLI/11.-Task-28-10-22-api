@@ -19,7 +19,6 @@ const getAndShowproducts = () => {
     fetch(`${BASE_URL}/products`)
         .then(res => res.json())
         .then(data => {
-            console.log(data);
             data?.products.map(product => {
 
                 cards.appendChild(makeNewCard(product.brand, product.title, product.thumbnail, product.description, product.id));
@@ -62,112 +61,13 @@ const getAndShowproducts = () => {
 
 
             });
-        }).then(() => {
-            addEvents();
-            numberRows();
         })
         .then(() => {
-            let editBtns = document.querySelectorAll('.edit-btn');
+            numberRows();
 
-            editBtns.forEach(btn => {
-                btn.onclick = (e) => {
-                    const BTN_CONTAINER = e.target.parentElement;
-
-
-                    let row = e.target.parentElement.parentElement.parentElement;
-                    let brandText = row.children[2];
-                    let titleText = row.children[3];
-
-
-                    let brand = brandText.innerHTML;
-                    let title = titleText.innerHTML;
-                    let newBrand = brand;
-                    let newTitle = title;
-
-                    // making fields inputs
-                    brandText.innerHTML = `
-                <input type="text" value="${brand}">
-                `;
-                    titleText.innerHTML = `
-                <input type="text" value="${title}">
-                `;
-                    // getting values from inputs 
-                    let brandInput = brandText.children[0];
-                    let titleInput = titleText.children[0];
-
-                    brandInput.addEventListener('change', () => {
-                        newBrand = brandInput.value;
-                    });
-
-                    titleInput.addEventListener('change', () => {
-                        newTitle = titleInput.value;
-                    });
-
-
-
-                    // hiding del,edit and show discard,save
-                    for (const btn of BTN_CONTAINER.children) {
-                        btn.classList.toggle('d-none');
-                    }
-
-
-
-                    let saveBtns = document.querySelectorAll('.save-btn');
-                    saveBtns.forEach(btn => {
-                        btn.onclick = (ev) => {
-                            brandText.innerHTML = newBrand;
-                            titleText.innerHTML = newTitle;
-
-                            // updating cards accordingly
-                            let searchId = row.getAttribute('id').replace('tr', 'card');
-                            console.log(searchId);
-                            let wantedCardTitle = document.querySelector(` #${searchId} .card-title`);
-                            let wantedCardBrand = document.querySelector(` #${searchId} .card-brand`);
-                            wantedCardBrand.innerHTML = newBrand;
-                            wantedCardTitle.innerHTML = newTitle;
-
-                            // hide save,discard and show edit,del
-                            for (const btn of BTN_CONTAINER.children) {
-                                btn.classList.toggle('d-none');
-                            }
-
-
-                            // Task Part 2
-
-                            fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
-                                method: "PUT",
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    brand: newBrand,
-                                    title: newTitle
-                                })
-                            })
-                                .then(res => res.json())
-                                .then(data => console.log(data));
-
-
-                        };
-                    });
-
-                    let discardBtns = document.querySelectorAll('.discard-btn');
-                    discardBtns.forEach(btn => {
-                        btn.onclick = (e) => {
-                            brandText.innerHTML = brand;
-                            titleText.innerHTML = title;
-                            // hide save,discard and show edit,del
-                            for (const btn of BTN_CONTAINER.children) {
-                                btn.classList.toggle('d-none');
-                            }
-
-                        };
-                    });
-
-
-
-
-                };
-            });
         });
+
+
 
 
 };
@@ -325,46 +225,7 @@ function MakeCardObj(brand, title, url, rating, desc) {
     this.description = desc;
     this.thumbnail = url;
 }
-const addEvents = () => {
-    let removeBtns = document.getElementsByClassName('remove-btn');
-    for (const btn of removeBtns) {
-        btn.addEventListener('click', (e) => {
-            let row = e.target.parentElement.parentElement.parentElement;
-            row.style.display = 'none';
-            tbody.removeChild(e.target.parentElement.parentElement.parentElement);
-            cards.removeChild(document.querySelector(`.card[id="${row.getAttribute('id').replace('tr', 'card')}"]`));
-            numberRows();
 
-            // Task Part 2
-            fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
-                method: "DELETE",
-            })
-                .then(res => res.json())
-                .then(data => console.log(data));
-        });
-    }
-    deleteBtns = document.getElementsByClassName('del-btn');
-    for (const btn of deleteBtns) {
-        btn.addEventListener('click', (e) => {
-            let card = e.target.parentElement.parentElement;
-            console.log(card);
-            cards.removeChild(e.target.parentElement.parentElement);
-
-            tbody.removeChild(document.getElementById(`${card.getAttribute('id').replace('card', 'tr')}`));
-
-            numberRows();
-
-            // Task Part 2
-            console.log('calisdi');
-            fetch(`${BASE_URL}/products/${card.id.replace('card', '')}`, {
-                method: "DELETE",
-            })
-                .then(res => res.json())
-                .then(data => console.log(data));
-        });
-    }
-
-};
 
 delSelectedBtn.addEventListener('click', () => {
     let checkedElements = document.querySelectorAll('input[type="checkbox"]:checked');
@@ -387,9 +248,130 @@ delSelectedBtn.addEventListener('click', () => {
 });
 
 
+cards.addEventListener('click', (e) => {
+    if (e.target.classList.contains('del-btn')) {
+        let card = e.target.parentElement.parentElement;
+        cards.removeChild(e.target.parentElement.parentElement);
+
+        tbody.removeChild(document.getElementById(`${card.getAttribute('id').replace('card', 'tr')}`));
+
+        numberRows();
+
+        // Task Part 2
+        fetch(`${BASE_URL}/products/${card.id.replace('card', '')}`, {
+            method: "DELETE",
+        })
+            .then(res => res.json())
+            .then(data => console.log(data));
+    }
+
+});
+
+tbody.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-btn')) {
+        console.log('calise');
+        let row = e.target.parentElement.parentElement.parentElement;
+        row.style.display = 'none';
+        tbody.removeChild(e.target.parentElement.parentElement.parentElement);
+        cards.removeChild(document.querySelector(`.card[id="${row.getAttribute('id').replace('tr', 'card')}"]`));
+        numberRows();
+
+        // Task Part 2
+        fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
+            method: "DELETE",
+        })
+            .then(res => res.json())
+            .then(data => console.log(data));
+    }
+    else if (e.target.classList.contains('edit-btn')) {
+        const BTN_CONTAINER = e.target.parentElement;
+        let row = e.target.parentElement.parentElement.parentElement;
+        let brandText = row.children[2];
+        let titleText = row.children[3];
+        let brand = brandText.innerHTML;
+        let title = titleText.innerHTML;
+        let newBrand = brand;
+        let newTitle = title;
+
+        // making fields inputs
+        brandText.innerHTML = `
+                <input type="text" value="${brand}">
+                `;
+        titleText.innerHTML = `
+                <input type="text" value="${title}">
+                `;
+        // getting values from inputs 
+        let brandInput = brandText.children[0];
+        let titleInput = titleText.children[0];
+
+        brandInput.addEventListener('change', () => {
+            newBrand = brandInput.value;
+        });
+
+        titleInput.addEventListener('change', () => {
+            newTitle = titleInput.value;
+        });
+
+        // hiding del,edit and show discard,save
+        for (const btn of BTN_CONTAINER.children) {
+            btn.classList.toggle('d-none');
+        }
+
+        let saveBtns = document.querySelectorAll('.save-btn');
+        saveBtns.forEach(btn => {
+            btn.onclick = () => {
+                brandText.innerHTML = newBrand;
+                titleText.innerHTML = newTitle;
+
+                // updating cards accordingly
+                let searchId = row.getAttribute('id').replace('tr', 'card');
+                let wantedCardTitle = document.querySelector(` #${searchId} .card-title`);
+                let wantedCardBrand = document.querySelector(` #${searchId} .card-brand`);
+                wantedCardBrand.innerHTML = newBrand;
+                wantedCardTitle.innerHTML = newTitle;
+
+                // hide save,discard and show edit,del
+                for (const btn of BTN_CONTAINER.children) {
+                    btn.classList.toggle('d-none');
+                }
+
+
+                // Task Part 2
+
+                fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
+                    method: "PUT",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        brand: newBrand,
+                        title: newTitle
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => console.log(data));
+
+            };
+
+        });
+
+
+        let discardBtns = document.querySelectorAll('.discard-btn');
+        discardBtns.forEach(btn => {
+            btn.onclick = (e) => {
+                brandText.innerHTML = brand;
+                titleText.innerHTML = title;
+                // hide save,discard and show edit,del
+                for (const btn of BTN_CONTAINER.children) {
+                    btn.classList.toggle('d-none');
+                }
+
+            };
+        });
 
 
 
 
 
 
+
+    }
+});
