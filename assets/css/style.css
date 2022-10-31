@@ -81,3 +81,15 @@ input{
 .card-text{
     font-size: 14px;
 }
+
+
+#tableWrapper tr button{
+    padding: 0;
+    flex: 1 0 0%;
+    border: none;
+    background-color: transparent;
+    font-size: 1.25rem!important;
+
+
+
+}
