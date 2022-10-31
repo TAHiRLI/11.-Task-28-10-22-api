@@ -1,4 +1,5 @@
 let deleteBtns = document.getElementsByClassName('del-btn');
+let delSelectedBtn = document.querySelector('#del-selected');
 let rowNumbers = document.querySelectorAll('th[scope = "row"');
 let table = document.querySelector('#tableWrapper');
 let tbody = document.querySelector('tbody');
@@ -18,7 +19,7 @@ const getAndShowproducts = () => {
     fetch(`${BASE_URL}/products`)
         .then(res => res.json())
         .then(data => {
-            console.log(data)
+            console.log(data);
             data?.products.map(product => {
 
                 cards.appendChild(makeNewCard(product.brand, product.title, product.thumbnail, product.description, product.id));
@@ -63,8 +64,8 @@ const getAndShowproducts = () => {
             });
         }).then(() => {
             addEvents();
+            numberRows();
         })
-        .then(() => numberRows())
         .then(() => {
             let editBtns = document.querySelectorAll('.edit-btn');
 
@@ -125,16 +126,24 @@ const getAndShowproducts = () => {
                             wantedCardBrand.innerHTML = newBrand;
                             wantedCardTitle.innerHTML = newTitle;
 
-
-
-
-
-
-
                             // hide save,discard and show edit,del
                             for (const btn of BTN_CONTAINER.children) {
                                 btn.classList.toggle('d-none');
                             }
+
+
+                            // Task Part 2
+
+                            fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
+                                method: "PUT",
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    brand: newBrand,
+                                    title: newTitle
+                                })
+                            })
+                                .then(res => res.json())
+                                .then(data => console.log(data));
 
 
                         };
@@ -170,19 +179,7 @@ menuBtn.addEventListener('click', () => {
 
 });
 
-let delSelectedBtn = document.querySelector('#del-selected');
 
-delSelectedBtn.addEventListener('click', () => {
-    let checkedElements = document.querySelectorAll('input[type="checkbox"]:checked');
-    for (const element of checkedElements) {
-        let row = element.parentElement.parentElement;
-        let card = document.querySelector(`#${row.getAttribute('id').replace('tr', 'card')}`);
-        console.log(card);
-        card.style.display = 'none';
-        tbody.removeChild(row);
-    }
-    numberRows();
-});
 let addBtn = document.querySelector('#add');
 
 let modalSaveBtn = document.querySelector('#modal-save');
@@ -192,14 +189,24 @@ modalSaveBtn.addEventListener('click', () => {
     let rating = document.querySelector('#rating').value;
     let url = document.querySelector('#url').value;
     let desc = document.querySelector('#desc').value;
-    let id = parseInt(cards.lastChild.id.replace('card', ''))+1;
+    let id = parseInt(cards.lastChild.id.replace('card', '')) + 1;
 
 
     cards.appendChild(makeNewCard(brand, title, url, desc, id));
     tbody.appendChild(makeNewRow(brand, title, rating, id));
 
 
-
+    // TASK part 2
+    let newObj = new MakeCardObj(brand, title, url, rating, desc);
+    fetch(`${BASE_URL}/products/add`, {
+        method: "POST",
+        body: JSON.stringify(newObj),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => res.json())
+        .then(data => console.log(data));
 });
 
 
@@ -311,15 +318,13 @@ const makeNewRow = (brand, title, rating, id) => {
 
 };
 
-function MakeCardObj(brand, title, url,rating, desc){
-    this.brand =brand;
+function MakeCardObj(brand, title, url, rating, desc) {
+    this.brand = brand;
     this.title = title;
     this.rating = rating;
     this.description = desc;
     this.thumbnail = url;
 }
-
-
 const addEvents = () => {
     let removeBtns = document.getElementsByClassName('remove-btn');
     for (const btn of removeBtns) {
@@ -328,10 +333,14 @@ const addEvents = () => {
             row.style.display = 'none';
             tbody.removeChild(e.target.parentElement.parentElement.parentElement);
             cards.removeChild(document.querySelector(`.card[id="${row.getAttribute('id').replace('tr', 'card')}"]`));
-
-
-
             numberRows();
+
+            // Task Part 2
+            fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
+                method: "DELETE",
+            })
+                .then(res => res.json())
+                .then(data => console.log(data));
         });
     }
     deleteBtns = document.getElementsByClassName('del-btn');
@@ -344,10 +353,41 @@ const addEvents = () => {
             tbody.removeChild(document.getElementById(`${card.getAttribute('id').replace('card', 'tr')}`));
 
             numberRows();
+
+            // Task Part 2
+            console.log('calisdi');
+            fetch(`${BASE_URL}/products/${card.id.replace('card', '')}`, {
+                method: "DELETE",
+            })
+                .then(res => res.json())
+                .then(data => console.log(data));
         });
     }
 
-}
+};
+
+delSelectedBtn.addEventListener('click', () => {
+    let checkedElements = document.querySelectorAll('input[type="checkbox"]:checked');
+    for (const element of checkedElements) {
+        let row = element.parentElement.parentElement;
+        let card = document.querySelector(`#${row.getAttribute('id').replace('tr', 'card')}`);
+        tbody.removeChild(row);
+        cards.removeChild(card);
+
+        // Task Part 2
+        fetch(`${BASE_URL}/products/${row.id.replace('tr', '')}`, {
+            method: "DELETE",
+        })
+            .then(res => res.json())
+            .then(data => console.log(data));
+
+
+    }
+    numberRows();
+});
+
+
+
 
 
 
